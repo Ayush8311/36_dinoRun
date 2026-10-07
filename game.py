@@ -12,17 +12,24 @@ HIGH_SCORE_FILE = "dino_highscore.txt"
 
 def dino_tint(on_ground):
     """Return an (r, g, b) colour override for the dino based on whether it's on the ground, or None for the default green."""
-    pass
+    if on_ground:
+        return None
+    return (240, 150, 40)
+
+
+combo = 0
 
 
 def on_obstacle_passed(obstacle, score):
     """Called once, the frame an obstacle finishes scrolling past the dino. Add a sound or a combo counter here."""
-    pass
+    global combo
+    combo += 1
+    print(f"+1 cleared! Combo x{combo} (score {score})")
 
 
 def max_jumps():
     """Return how many jumps the dino gets before it must land again (2 for a double jump), or None for the default of 1."""
-    pass
+    return 2
 
 
 def load_high_score():
@@ -102,6 +109,9 @@ class Game:
         self.reset()
 
     def reset(self):
+        global combo
+        combo = 0
+        self.dino = Dino(80, GROUND_Y)
         self.dino = Dino(80, GROUND_Y)
         self.obstacles = []
         self.score = 0
@@ -141,7 +151,7 @@ class Game:
         if hit:
             self.state = "lose"
             current = self.score // 10
-            if self.high_score > current:
+            if current > self.high_score:
                 self.high_score = current
                 save_high_score(self.high_score)
             return
